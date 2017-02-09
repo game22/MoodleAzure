@@ -33,12 +33,17 @@ sudo add-apt-repository ppa:gluster/glusterfs-3.7 -y
 sudo apt-get -y update
 sudo apt-get -y --force-yes install glusterfs-client mysql-client git 
 
+#install php7
+sudo add-apt-repository ppa:ondrej/php -y
+sudo apt-get -y update
+sudo apt-get -y install php7.0
+sudo apt-get -y install php7.0-mysql
+sudo apt-get -y install graphviz aspell php7.0-pspell php7.0-curl php7.0-gd php7.0-intl php7.0-mysql php7.0-xml php7.0-xmlrpc php7.0-ldap php7.0-zip php7.0-soap php7.0-mbstring
 
 # install the LAMP stack
-sudo apt-get -y install apache2 php5
+sudo apt-get -y install apache2 
 
-# install moodle requirements
-sudo apt-get -y install graphviz aspell php5-pspell php5-curl php5-gd php5-intl php5-mysql php5-xmlrpc php5-ldap php5-redis
+
 
 # create gluster mount point
 sudo mkdir -p /moodle
@@ -71,24 +76,21 @@ echo -e '
         CustomLog ${APACHE_LOG_DIR}/access.log combined
         #Include conf-available/serve-cgi-bin.conf
 </VirtualHost>
-<VirtualHost *:443>
-        DocumentRoot /moodle/html/moodle
-        ErrorLog ${APACHE_LOG_DIR}/error.log
-        CustomLog ${APACHE_LOG_DIR}/access.log combined
-
-        SSLEngine on
-        SSLCertificateFile /moodle/certs/apache.crt
-        SSLCertificateKeyFile /moodle/certs/apache.key
-
-        BrowserMatch "MSIE [2-6]" \
+#<VirtualHost *:443>
+      #  DocumentRoot /moodle/html/moodle
+       # ErrorLog ${APACHE_LOG_DIR}/error.log
+      #  CustomLog ${APACHE_LOG_DIR}/access.log combined
+      #  SSLEngine on
+      #  SSLCertificateFile /moodle/certs/apache.crt
+     #   SSLCertificateKeyFile /moodle/certs/apache.key
+     #   BrowserMatch "MSIE [2-6]" \
                         nokeepalive ssl-unclean-shutdown \
-                        downgrade-1.0 force-response-1.0
-        BrowserMatch "MSIE [17-9]" ssl-unclean-shutdown
-
-</VirtualHost>' > /etc/apache2/sites-enabled/000-default.conf
+    #                    downgrade-1.0 force-response-1.0
+     #   BrowserMatch "MSIE [17-9]" ssl-unclean-shutdown
+#</VirtualHost>' > /etc/apache2/sites-enabled/000-default.conf
 
 # php config 
-PhpIni=/etc/php5/apache2/php.ini
+PhpIni=/etc/php/7.0/apache2/php.ini
 sed -i "s/memory_limit.*/memory_limit = 512M/" $PhpIni
 sed -i "s/;opcache.use_cwd = 1/opcache.use_cwd = 1/" $PhpIni
 sed -i "s/;opcache.validate_timestamps = 1/opcache.validate_timestamps = 1/" $PhpIni
@@ -100,4 +102,4 @@ sed -i "s/;opcache.max_accelerated_files.*/opcache.max_accelerated_files = 8000/
 
 # restart Apache
 sudo service apache2 restart 
-
+sudo a2dismod php5.6 && sudo a2enmod php7.0 && sudo service apache2 restart
